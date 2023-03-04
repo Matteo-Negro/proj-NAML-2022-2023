@@ -280,10 +280,10 @@ class BaseGraph:
 
         Raises a GraphError if the edge is not in the graph.
         """
-        if (node1_id, node2_id) not in self._edges:
+        if f'({node1_id}, {node2_id})' not in self._edges:
             raise GraphError('Edge is not in the graph.')
 
-        return self._edges[(node1_id, node2_id)]
+        return self._edges[f'({node1_id}, {node2_id})']
 
     def edges(self):
         """Return a list of all the edges in this graph.
@@ -306,13 +306,14 @@ class BaseGraph:
         corresponding to the edge between the two nodes. Raises a
         GraphError if the node IDs or edge are not in the graph.
         """
-        regex = re.compile('\(\w, \w\)')
+        regex = re.compile('\(\w, \w\)|\(\w, \'\w\'\)|\(\'\w\', \w\)|\(\'\w\', \'\w\'\)')
         edge = regex.match(str(key))
 
         if edge:
-            if key not in self._edges:
+            tmp = f'({key[0]}, {key[1]})'
+            if tmp not in self._edges:
                 raise GraphError('Edge is not in the graph.')
-            return self._edges[key]
+            return self._edges[tmp]
         else:
             if key not in self._nodes:
                 raise GraphError('Node is not in the graph.')
@@ -326,10 +327,11 @@ class BaseGraph:
         True if there is an edge corresponding to the two nodes.
         Otherwise, returns False.
         """
-        regex = re.compile('\(\w, \w\)')
+        regex = re.compile('\(\w, \w\)|\(\w, \'\w\'\)|\(\'\w\', \w\)|\(\'\w\', \'\w\'\)')
         edge = regex.match(str(item))
         if edge:
-            if item in self._edges:
+            tmp = f'({item[0]}, {item[1]})'
+            if tmp in self._edges:
                 return True
         else:
             if item in self._nodes:
@@ -404,8 +406,6 @@ class UndirectedGraph(BaseGraph):
 
         regex = re.compile(f'\({node_id}, \w\)')
         edges = list(self._edges.keys())
-
-        print(self._edges)
 
         degree = 0
         for e in edges:
