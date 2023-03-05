@@ -72,6 +72,12 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
     for _ in tqdm(range(num_iterations)):
         oldPR = np.array(PR)
         for i, u in enumerate(nodes):
+            print(BLMask[u])
+            print(outDegreeBL[BLMask[u]])
+            for idx, elem in enumerate(outDegreeBL[BLMask[u]]):
+                if elem == 0:
+                    print(f'Node: {u} is linked to node in position {idx}')
+            print('-------')
             PR[i] = ((1 - d) / N) + d * (np.sum(oldPR[BLMask[u]] / outDegreeBL[BLMask[u]]) + np.sum(oldPR[sinkMask] / N))
 
     result = dict()
@@ -166,7 +172,7 @@ if __name__ == '__main__':
     # Reads a digraph from the node and edge files passed as
     # command-line arguments.
     # main(*sys.argv[1:])
-    pagerank_from_csv('characters-nodes.csv', 'characters-edges.csv', 40)
+    pagerank_from_csv('email-Eu-core.txt-nodes.csv', 'email-Eu-core.txt-edges.csv', 40)
     # g = graph.DirectedGraph()
     # g.add_node(0, airport_name='DTW')
     # g.add_node(1, airport_name='AMS', country='The Netherlands')

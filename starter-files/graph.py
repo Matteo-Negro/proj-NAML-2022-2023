@@ -306,7 +306,7 @@ class BaseGraph:
         corresponding to the edge between the two nodes. Raises a
         GraphError if the node IDs or edge are not in the graph.
         """
-        regex = re.compile('\(\w, \w\)|\(\w, \'\w\'\)|\(\'\w\', \w\)|\(\'\w\', \'\w\'\)')
+        regex = re.compile('\(\w+, \w+\)|\(\w+, \'\w+\'\)|\(\'\w+\', \w+\)|\(\'\w+\', \'\w+\'\)')
         edge = regex.match(str(key))
 
         if edge:
@@ -327,7 +327,7 @@ class BaseGraph:
         True if there is an edge corresponding to the two nodes.
         Otherwise, returns False.
         """
-        regex = re.compile('\(\w, \w\)|\(\w, \'\w\'\)|\(\'\w\', \w\)|\(\'\w\', \'\w\'\)')
+        regex = re.compile('\(\w+, \w+\)|\(\w+, \'\w+\'\)|\(\'\w+\', \w+\)|\(\'\w+\', \'\w+\'\)')
         edge = regex.match(str(item))
         if edge:
             tmp = f'({item[0]}, {item[1]})'
@@ -404,7 +404,8 @@ class UndirectedGraph(BaseGraph):
         if node_id not in self._nodes:
             raise GraphError('Node ID is not found.')
 
-        regex = re.compile(f'\({node_id}, \w\)')
+        regex = re.compile(
+            f'\({node_id}, \w+\)|\(\'{node_id}\', \w+\)|\({node_id}, \'\w+\'\)|\(\'{node_id}\', \'\w+\'\)')
         edges = list(self._edges.keys())
 
         degree = 0
@@ -486,7 +487,8 @@ class DirectedGraph(BaseGraph):
         if node_id not in self._nodes:
             raise GraphError('Node ID is not found.')
 
-        regex = re.compile(f'\(\w, {node_id}\)')
+        regex = re.compile(
+            f'\(\w+, {node_id}\)|\(\w+, \'{node_id}\'\)|\(\'\w+\', {node_id}\)|\(\'\w+\', \'{node_id}\'\)')
         edges = list(self._edges.keys())
 
         degree = 0
@@ -504,7 +506,8 @@ class DirectedGraph(BaseGraph):
         if node_id not in self._nodes:
             raise GraphError('Node ID is not found.')
 
-        regex = re.compile(f'\({node_id}, \w\)')
+        regex = re.compile(
+            f'\({node_id}, \w+\)|\(\'{node_id}\', \w+\)|\({node_id}, \'\w+\'\)|\(\'{node_id}\', \'\w+\'\)')
         edges = list(self._edges.keys())
 
         degree = 0

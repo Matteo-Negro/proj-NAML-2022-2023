@@ -1,0 +1,104 @@
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+UndirectedGraph:
+Node [0]
+    Age : 20
+    Gender : M
+    Name : Spongebob Squarepants
+    Occupation : Fry Cook
+Node [1]
+    Age : 100
+    Gender : M
+    Name : Gary
+    Occupation : Snail
+Node [2]
+    Age : 5
+    Gender : M
+    Name : Patrick Star
+    Occupation : None
+Node [3]
+    Age : 25
+    Gender : F
+    Name : Sandy Cheeks
+    Occupation : Texan
+Node [4]
+    Age : 40
+    Gender : M
+    Name : Plankton
+    Occupation : Evil Villain
+Node [5]
+    Age : 30
+    Gender : M
+    Name : Squidward Tentacles
+    Occupation : Artiste
+Node [6]
+    Age : 50
+    Gender : M
+    Name : Mr. Krabs
+    Occupation : Owner of the Krusty Krab
+Node [7]
+    Age : 19
+    Gender : F
+    Name : Pearl
+    Occupation : None
+Node [8]
+    Age : 25
+    Gender : M
+    Name : Larry the Lobster
+    Occupation : Lifeguard
+Node [9]
+    Age : 42
+    Gender : F
+    Name : Mrs. Puff
+    Occupation : Driving Instructor
+Edge from node [0] to node [1]
+    Relationship Type : Pet
+Edge from node [0] to node [2]
+    Relationship Type : Best Friends
+Edge from node [0] to node [3]
+    Relationship Type : Does Karate Together
+Edge from node [0] to node [5]
+    Relationship Type : Neighbors and Best Friends
+Edge from node [0] to node [6]
+    Relationship Type : Works For
+Edge from node [0] to node [9]
+    Relationship Type : Takes Driving Lessons From
+Edge from node [1] to node [0]
+    Relationship Type : Pet
+Edge from node [2] to node [0]
+    Relationship Type : Best Friends
+Edge from node [3] to node [0]
+    Relationship Type : Does Karate Together
+Edge from node [4] to node [6]
+    Relationship Type : Mortal Enemies
+Edge from node [5] to node [0]
+    Relationship Type : Neighbors and Best Friends
+Edge from node [6] to node [0]
+    Relationship Type : Works For
+Edge from node [6] to node [4]
+    Relationship Type : Mortal Enemies
+Edge from node [6] to node [7]
+    Relationship Type : Daughter
+Edge from node [7] to node [6]
+    Relationship Type : Daughter
+Edge from node [9] to node [0]
+    Relationship Type : Takes Driving Lessons From
+
+DirectedGraph:
+Node [0]
+    airport_name : DTW
+Node [1]
+    airport_name : AMS
+    country : The Netherlands
+Node [2]
+    airport_name : ORD
+    city : Chicago
+Node [3]
+Node [4]
+Edge from node [0] to node [1]
+    flight_time_in_hours : 8
+Edge from node [0] to node [2]
+    flight_time_in_hours : 1
+Edge from node [1] to node [0]
+    airline_name : KLM
+Edge from node [3] to node [4]
+
