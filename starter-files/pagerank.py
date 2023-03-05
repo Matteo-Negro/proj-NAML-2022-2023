@@ -56,11 +56,9 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
     >>> abs(pagerank(g)[2] - 0.303191) < 0.001
     True
     """
-
     N = len(digraph)
     d = damping_factor
     PR = np.zeros(N) + (1 / N)
-    outDegreeVec = np.zeros(N, dtype=int)
 
     print('Getting Nodes...')
     t0 = time.time_ns()
@@ -76,6 +74,7 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
 
     print('Evaluating OutDegree...')
     t0 = time.time_ns()
+    # outDegreeVec = np.zeros(N, dtype=int)
     # for j, n in enumerate(nodes):
     #     outDegreeVec[j] = digraph.out_degree(n.identifier())
     outDegreeVec = digraph.out_degree_vector()
@@ -94,7 +93,7 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
         oldPR = np.array(PR)
         for i, u in enumerate(nodes):
             PR[i] = ((1 - d) / N) + d * (
-                        np.sum(oldPR[BLMask[u]] / outDegreeVec[BLMask[u]]) + np.sum(oldPR[sinkMask] / N))
+                    np.sum(oldPR[BLMask[u]] / outDegreeVec[BLMask[u]]) + np.sum(oldPR[sinkMask] / N))
     delta = time.time_ns() - t0
     print(f'Computing the Alg... DONE [{(delta * 1e-9): 0.5f}]')
 
@@ -121,15 +120,6 @@ def backLinksMaskGenerator(graph):
         result[n2][nodes.index(n1)] = True
 
     return result
-
-
-def sinkMaskGenerator(graph):
-    mask = np.zeros(len(graph), dtype=int)
-    nodes = graph.nodes()
-    for i, n in enumerate(nodes):
-        if graph.out_degree(n.identifier()) == 0:
-            mask[i] = 1
-    return np.array(mask, dtype=bool)
 
 
 def print_ranks(ranks, max_nodes=20):
