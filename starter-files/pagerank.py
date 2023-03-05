@@ -59,31 +59,40 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
     N = len(digraph)
     d = damping_factor
     nodes = digraph.nodes()
-    sinkMask = sinkMaskGenerator(digraph)
 
+    BLMask = backLinksMaskGenerator(digraph)
     PR = np.zeros(N) + (1 / N)
     outDegreeBL = np.zeros(N, dtype=int)
 
     for j, n in enumerate(nodes):
         outDegreeBL[j] = digraph.out_degree(n.identifier())
 
+    sinkMask = outDegreeBL == 0
+
     for _ in tqdm(range(num_iterations)):
         oldPR = np.array(PR)
         for i, u in enumerate(nodes):
-            BLMask = backLinksMaskGenerator(digraph, u)
+            PR[i] = ((1 - d) / N) + d * (np.sum(oldPR[BLMask[u]] / outDegreeBL[BLMask[u]]) + np.sum(oldPR[sinkMask] / N))
 
-            PR[i] = ((1 - d) / N) + d * (np.sum(oldPR[BLMask] / outDegreeBL[BLMask]) + np.sum(oldPR[sinkMask] / N))
-    return PR
+    result = dict()
+    for j, n in enumerate(nodes):
+        result[n.identifier()] = PR[j]
+
+    return result
 
 
-def backLinksMaskGenerator(graph, u):
-    mask = np.zeros(len(graph), dtype=int)
+def backLinksMaskGenerator(graph):
+    result = dict()
     nodes = graph.nodes()
+    for n in nodes:
+        mask = np.zeros(len(graph), dtype=int)
+        result[n] = np.array(mask, dtype=bool)
+
     for e in graph.edges():
         n1, n2 = e.nodes()
-        if n2 == u:
-            mask[nodes.index(n1)] = 1
-    return np.array(mask, dtype=bool)
+        result[n2][nodes.index(n1)] = True
+
+    return result
 
 
 def sinkMaskGenerator(graph):
@@ -157,4 +166,12 @@ if __name__ == '__main__':
     # Reads a digraph from the node and edge files passed as
     # command-line arguments.
     # main(*sys.argv[1:])
-    pagerank_from_csv('email-Eu-core.txt-nodes.csv', 'email-Eu-core.txt-edges.csv', 40)
+    pagerank_from_csv('characters-nodes.csv', 'characters-edges.csv', 40)
+    # g = graph.DirectedGraph()
+    # g.add_node(0, airport_name='DTW')
+    # g.add_node(1, airport_name='AMS', country='The Netherlands')
+    # g.add_node(2, airport_name='ORD', city='Chicago')
+    # g.add_edge(0, 1, flight_time_in_hours=8)
+    # g.add_edge(0, 2, flight_time_in_hours=1)
+    # g.add_edge(1, 0, airline_name='KLM')
+    # abs(pagerank(g, 1)[0] - 0.427777) < 0.001
