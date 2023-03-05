@@ -24,7 +24,7 @@ Project UID bd3b06d8a60861e18088226c3a1f0595e4426dcf
 import sys
 import graph
 import numpy as np
-from tqdm import tqdm
+import time
 
 
 def pagerank(digraph, num_iterations=40, damping_factor=.85):
@@ -56,33 +56,53 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
     >>> abs(pagerank(g)[2] - 0.303191) < 0.001
     True
     """
+
     N = len(digraph)
     d = damping_factor
-    nodes = digraph.nodes()
-
-    BLMask = backLinksMaskGenerator(digraph)
     PR = np.zeros(N) + (1 / N)
-    outDegreeBL = np.zeros(N, dtype=int)
+    outDegreeVec = np.zeros(N, dtype=int)
 
+    print('Getting Nodes...')
+    t0 = time.time_ns()
+    nodes = digraph.nodes()
+    delta = time.time_ns() - t0
+    print(f'Getting Nodes... DONE [{delta}]')
+
+    print('Evaluating BackLinks...')
+    t0 = time.time_ns()
+    BLMask = backLinksMaskGenerator(digraph)
+    delta = time.time_ns() - t0
+    print(f'Evaluating BackLinks... DONE [{delta}]')
+
+    print('Evaluating OutDegree...')
+    t0 = time.time_ns()
     for j, n in enumerate(nodes):
-        outDegreeBL[j] = digraph.out_degree(n.identifier())
+        outDegreeVec[j] = digraph.out_degree(n.identifier())
+    delta = time.time_ns() - t0
+    print(f'Evaluating OutDegree... DONE [{delta}]')
 
-    sinkMask = outDegreeBL == 0
+    print('Evaluating SinkMask...')
+    t0 = time.time_ns()
+    sinkMask = outDegreeVec == 0
+    delta = time.time_ns() - t0
+    print(f'Evaluating SinkMask... DONE [{delta}]')
 
-    for _ in tqdm(range(num_iterations)):
+    print('Computing the Alg...')
+    t0 = time.time_ns()
+    for _ in range(num_iterations):
         oldPR = np.array(PR)
         for i, u in enumerate(nodes):
-            print(BLMask[u])
-            print(outDegreeBL[BLMask[u]])
-            for idx, elem in enumerate(outDegreeBL[BLMask[u]]):
-                if elem == 0:
-                    print(f'Node: {u} is linked to node in position {idx}')
-            print('-------')
-            PR[i] = ((1 - d) / N) + d * (np.sum(oldPR[BLMask[u]] / outDegreeBL[BLMask[u]]) + np.sum(oldPR[sinkMask] / N))
+            PR[i] = ((1 - d) / N) + d * (np.sum(oldPR[BLMask[u]] / outDegreeVec[BLMask[u]]) + np.sum(oldPR[sinkMask] / N))
+    delta = time.time_ns() - t0
+    print(f'Computing the Alg... DONE [{delta}]')
 
+    print('Preparing the printing...')
+    t0 = time.time_ns()
     result = dict()
     for j, n in enumerate(nodes):
         result[n.identifier()] = PR[j]
+    delta = time.time_ns() - t0
+    print(f'Preparing the printing... DONE [{delta}]')
 
     return result
 
@@ -144,9 +164,28 @@ def pagerank_from_csv(node_file, edge_file, num_iterations):
     20 nodes, to standard out. Also prints out the sum of all the
     PageRank values, which should approximate to 1.
     """
+    readTime = time.time_ns()
     rgraph = graph.read_graph_from_csv(node_file, edge_file, True)
+    execTime = time.time_ns()
     ranks = pagerank(rgraph, num_iterations)
+    printTime = time.time_ns()
+    print('-----------------------------------------')
     print_ranks(ranks)
+    endTime = time.time_ns()
+
+    print(' ---------------------------------------')
+    print(f'|\tREAD TIME: \t\t{execTime - readTime}\t\t\t|')
+    print(f'|\tEXEC TIME: \t\t{printTime- execTime}\t\t\t|')
+    print(f'|\tPRINT TIME: \t{endTime - execTime}\t\t\t|')
+    print('|\tThese times are collected in ns.\t|')
+    print(' ---------------------------------------')
+
+    print(' ---------------------------------------')
+    print(f'|\tREAD TIME: \t\t{((execTime - readTime)*1e-9): .5f}\t\t\t|')
+    print(f'|\tEXEC TIME: \t\t{((printTime - execTime)*1e-9): .5f}\t\t\t|')
+    print(f'|\tPRINT TIME: \t{((endTime - execTime)*1e-9): .5f}\t\t\t|')
+    print('|\tThese times are collected in s.\t\t|')
+    print(' ---------------------------------------')
 
 
 def usage():
@@ -172,12 +211,5 @@ if __name__ == '__main__':
     # Reads a digraph from the node and edge files passed as
     # command-line arguments.
     # main(*sys.argv[1:])
-    pagerank_from_csv('email-Eu-core.txt-nodes.csv', 'email-Eu-core.txt-edges.csv', 40)
-    # g = graph.DirectedGraph()
-    # g.add_node(0, airport_name='DTW')
-    # g.add_node(1, airport_name='AMS', country='The Netherlands')
-    # g.add_node(2, airport_name='ORD', city='Chicago')
-    # g.add_edge(0, 1, flight_time_in_hours=8)
-    # g.add_edge(0, 2, flight_time_in_hours=1)
-    # g.add_edge(1, 0, airline_name='KLM')
-    # abs(pagerank(g, 1)[0] - 0.427777) < 0.001
+    pagerank_from_csv('twitter_combined.txt-nodes.csv', 'twitter_combined.txt-edges.csv', 40)
+
