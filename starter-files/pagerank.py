@@ -74,11 +74,8 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
     print(f'Evaluating BackLinks... DONE [{(delta * 1e-9): 0.5f}]')
 
     print('Evaluating OutDegree...')
-    # outDegreeVec = np.zeros(N, dtype=int)
-    # for j, n in enumerate(nodes):
-    #     outDegreeVec[j] = digraph.out_degree(n.identifier())
     t0 = time.time_ns()
-    outDegreeVec = digraph.out_degree_vector_2()
+    outDegreeVec = digraph.out_degree_vector()
     delta = time.time_ns() - t0
     print(f'Evaluating OutDegree... DONE [{(delta * 1e-9): 0.5f}]')
 

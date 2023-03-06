@@ -307,8 +307,7 @@ class BaseGraph:
         nodes = self.nodes()
         for n in nodes:
             mask = np.zeros(len(self), dtype=bool)
-            for k in self._bl[n]:
-                mask[nodes.index(k)] = True
+            mask = nodes == self._bl[n]
             result[n] = mask
 
         return result
@@ -537,19 +536,6 @@ class DirectedGraph(BaseGraph):
         return degree
 
     def out_degree_vector(self):
-        """Return the out-degree of all the nodes.
-        """
-        edges = self.edges()
-        nodes = self.nodes()
-
-        degree = np.zeros(len(nodes), dtype=int)
-        for e in edges:
-            n1, n2 = e.nodes()
-            degree[nodes.index(n1)] += 1
-
-        return degree
-
-    def out_degree_vector_2(self):
         """Return the out-degree of all the nodes.
         """
         nodes = self.nodes()
