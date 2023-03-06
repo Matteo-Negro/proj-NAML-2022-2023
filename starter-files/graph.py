@@ -10,7 +10,6 @@ import csv
 import doctest
 import re
 
-
 # add whatever imports you need here
 import numpy as np
 
@@ -217,6 +216,7 @@ class BaseGraph:
         self._numNodes = 0
         self._nodes = dict()
         self._edges = dict()
+        self._bl = dict()
 
     def __len__(self):
         """Return the number of nodes in the graph."""
@@ -237,6 +237,7 @@ class BaseGraph:
         n = Node(node_id, **attributes)
         self._nodes[node_id] = n
         self._numNodes += 1
+        self._bl[n] = list()
 
     def node(self, node_id):
         """Return the Node object for the node whose ID is node_id.
@@ -276,6 +277,8 @@ class BaseGraph:
             raise GraphError('Graph already contains an edge between the two nodes.')
         self._edges[f'({node1_id}, {node2_id})'] = e
 
+        self._bl[self._nodes[node2_id]].append(self._nodes[node1_id])
+
     def edge(self, node1_id, node2_id):
         """Return the Edge object for the edge between the given nodes.
 
@@ -298,6 +301,17 @@ class BaseGraph:
             tmp.append(self._edges[k])
 
         return tmp
+
+    def getBL(self):
+        result = dict()
+        nodes = self.nodes()
+        for n in nodes:
+            mask = np.zeros(len(self), dtype=bool)
+            for k in self._bl[n]:
+                mask[nodes.index(k)] = True
+            result[n] = mask
+
+        return result
 
     def __getitem__(self, key):
         """Return the Node or Edge corresponding to the given key.
@@ -480,6 +494,10 @@ class DirectedGraph(BaseGraph):
     <BLANKLINE>
     """
 
+    def __init__(self):
+        super().__init__()
+        self._outDegreeDict = dict()
+
     def in_degree(self, node_id):
         """Return the in-degree of the node with the given ID.
 
@@ -530,6 +548,39 @@ class DirectedGraph(BaseGraph):
             degree[nodes.index(n1)] += 1
 
         return degree
+
+    def out_degree_vector_2(self):
+        """Return the out-degree of all the nodes.
+        """
+        nodes = self.nodes()
+        degree = np.zeros(len(nodes), dtype=int)
+
+        for i, n in enumerate(nodes):
+            degree[i] = self._outDegreeDict[n]
+
+        return degree
+
+    def add_node(self, node_id, **attributes):
+        """Add a node to this graph.
+
+        Requires that node_id, the unique identifier for the node, is
+        hashable and comparable to all identifiers for nodes currently
+        in the graph. The keyword arguments are optional node
+        attributes. Raises a GraphError if a node already exists with
+        the given ID.
+        """
+        super().add_node(node_id, **attributes)
+        self._outDegreeDict[self._nodes[node_id]] = 0
+
+    def add_edge(self, node1_id, node2_id, **attributes):
+        """Add the edge between the nodes with the given IDs.
+
+        The keyword arguments are optional edge attributes. Raises a
+        GraphError if either node is not found, or if the graph
+        already contains an edge between the two nodes.
+        """
+        super().add_edge(node1_id, node2_id, **attributes)
+        self._outDegreeDict[self._nodes[node1_id]] += 1
 
 
 def read_graph_from_csv(node_file, edge_file, directed=False):

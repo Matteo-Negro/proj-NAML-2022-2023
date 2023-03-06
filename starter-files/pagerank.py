@@ -68,7 +68,8 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
 
     print('Evaluating BackLinks...')
     t0 = time.time_ns()
-    BLMask = backLinksMaskGenerator(digraph)
+    # BLMask = backLinksMaskGenerator(digraph)
+    BLMask = digraph.getBL()
     delta = time.time_ns() - t0
     print(f'Evaluating BackLinks... DONE [{(delta * 1e-9): 0.5f}]')
 
@@ -77,7 +78,7 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
     # for j, n in enumerate(nodes):
     #     outDegreeVec[j] = digraph.out_degree(n.identifier())
     t0 = time.time_ns()
-    outDegreeVec = digraph.out_degree_vector()
+    outDegreeVec = digraph.out_degree_vector_2()
     delta = time.time_ns() - t0
     print(f'Evaluating OutDegree... DONE [{(delta * 1e-9): 0.5f}]')
 
@@ -112,8 +113,7 @@ def backLinksMaskGenerator(graph):
     result = dict()
     nodes = graph.nodes()
     for n in nodes:
-        mask = np.zeros(len(graph), dtype=int)
-        result[n] = np.array(mask, dtype=bool)
+        result[n] = np.zeros(len(graph), dtype=bool)
 
     for e in graph.edges():
         n1, n2 = e.nodes()
@@ -168,7 +168,7 @@ def pagerank_from_csv(node_file, edge_file, num_iterations):
     print(' ---------------------------------------')
     print(f'|\tREAD TIME: \t\t{execTime - readTime}\t\t\t|')
     print(f'|\tEXEC TIME: \t\t{printTime - execTime}\t\t\t|')
-    print(f'|\tPRINT TIME: \t{endTime - printTime}\t\t\t|')
+    print(f'|\tPRINT TIME: \t{endTime - printTime}\t\t\t\t|')
     print('|\tThese times are collected in ns.\t|')
     print(' ---------------------------------------')
 
@@ -204,4 +204,4 @@ if __name__ == '__main__':
     # Reads a digraph from the node and edge files passed as
     # command-line arguments.
     # main(*sys.argv[1:])
-    pagerank_from_csv('email-Eu-core.txt-nodes.csv', 'email-Eu-core.txt-edges.csv', 40)
+    pagerank_from_csv('twitter_combined.txt-nodes.csv', 'twitter_combined.txt-edges.csv', 40)
