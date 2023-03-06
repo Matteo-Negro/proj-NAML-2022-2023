@@ -73,10 +73,10 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
     print(f'Evaluating BackLinks... DONE [{(delta * 1e-9): 0.5f}]')
 
     print('Evaluating OutDegree...')
-    t0 = time.time_ns()
     # outDegreeVec = np.zeros(N, dtype=int)
     # for j, n in enumerate(nodes):
     #     outDegreeVec[j] = digraph.out_degree(n.identifier())
+    t0 = time.time_ns()
     outDegreeVec = digraph.out_degree_vector()
     delta = time.time_ns() - t0
     print(f'Evaluating OutDegree... DONE [{(delta * 1e-9): 0.5f}]')
@@ -91,9 +91,9 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
     t0 = time.time_ns()
     for _ in range(num_iterations):
         oldPR = np.array(PR)
+        sinkFactor = np.sum(oldPR[sinkMask] / N)
         for i, u in enumerate(nodes):
-            PR[i] = ((1 - d) / N) + d * (
-                    np.sum(oldPR[BLMask[u]] / outDegreeVec[BLMask[u]]) + np.sum(oldPR[sinkMask] / N))
+            PR[i] = ((1 - d) / N) + d * (np.sum(oldPR[BLMask[u]] / outDegreeVec[BLMask[u]]) + sinkFactor)
     delta = time.time_ns() - t0
     print(f'Computing the Alg... DONE [{(delta * 1e-9): 0.5f}]')
 
@@ -168,14 +168,14 @@ def pagerank_from_csv(node_file, edge_file, num_iterations):
     print(' ---------------------------------------')
     print(f'|\tREAD TIME: \t\t{execTime - readTime}\t\t\t|')
     print(f'|\tEXEC TIME: \t\t{printTime - execTime}\t\t\t|')
-    print(f'|\tPRINT TIME: \t{endTime - execTime}\t\t\t|')
+    print(f'|\tPRINT TIME: \t{endTime - printTime}\t\t\t|')
     print('|\tThese times are collected in ns.\t|')
     print(' ---------------------------------------')
 
     print(' ---------------------------------------')
     print(f'|\tREAD TIME: \t\t{((execTime - readTime) * 1e-9): .5f}\t\t\t|')
     print(f'|\tEXEC TIME: \t\t{((printTime - execTime) * 1e-9): .5f}\t\t\t|')
-    print(f'|\tPRINT TIME: \t{((endTime - execTime) * 1e-9): .5f}\t\t\t|')
+    print(f'|\tPRINT TIME: \t{((endTime - printTime) * 1e-9): .5f}\t\t\t|')
     print('|\tThese times are collected in s.\t\t|')
     print(' ---------------------------------------')
 
