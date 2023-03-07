@@ -302,12 +302,19 @@ class BaseGraph:
 
         return tmp
 
-    def getBL(self):
+    def get_bl(self):
         result = dict()
         nodes = self.nodes()
+        idxs = dict()
+
+        for i, n in enumerate(nodes):
+            idxs[n] = i
+
         for n in nodes:
             mask = np.zeros(len(self), dtype=bool)
-            mask = nodes == self._bl[n]
+            for k in self._bl[n]:
+                mask[idxs[k]] = True
+
             result[n] = mask
 
         return result

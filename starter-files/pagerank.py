@@ -68,8 +68,7 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
 
     print('Evaluating BackLinks...')
     t0 = time.time_ns()
-    # BLMask = backLinksMaskGenerator(digraph)
-    BLMask = digraph.getBL()
+    BLMask = digraph.get_bl()
     delta = time.time_ns() - t0
     print(f'Evaluating BackLinks... DONE [{(delta * 1e-9): 0.5f}]')
 
@@ -102,19 +101,6 @@ def pagerank(digraph, num_iterations=40, damping_factor=.85):
         result[n.identifier()] = PR[j]
     delta = time.time_ns() - t0
     print(f'Preparing the printing... DONE [{(delta * 1e-9): 0.5f}]')
-
-    return result
-
-
-def backLinksMaskGenerator(graph):
-    result = dict()
-    nodes = graph.nodes()
-    for n in nodes:
-        result[n] = np.zeros(len(graph), dtype=bool)
-
-    for e in graph.edges():
-        n1, n2 = e.nodes()
-        result[n2][nodes.index(n1)] = True
 
     return result
 
