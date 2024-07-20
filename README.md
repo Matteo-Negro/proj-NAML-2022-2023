@@ -1,6 +1,9 @@
-## Numerical Analysis for Machine Learning project | A.A. 2022-2023 | Politecnico di Milano
+## Page Rank Implementation in Python
+Numerical Analysis for Machine Learning project | A.A. 2022-2023 | Politecnico di Milano
+
 ---
-### Intoduction
+
+### Introduction
 
 This repository contains an implementation of the PageRank algorithm introduced by Larry Page and Sergey Brin. It also contains an implementation of Graph ADTs to make the algorithm work properly.
 The project aims to understand the usage of objective-oriented programming in Python and learn how web surfers work. 
@@ -9,6 +12,7 @@ The project aims to develop a performant version to scale also on big datasets.
 
 ---
 ### Repository Structure
+
 ```plaintext
 │   README.md
 │   LICENSE
@@ -35,6 +39,7 @@ The project aims to develop a performant version to scale also on big datasets.
 
 ---
 ### Results
+
 The following table presents the performance on different datasets:
 
 | **Dataset**          | **Node**  | **Edges** | **Time**    |
