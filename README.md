@@ -8,8 +8,7 @@ Browsers, such as Google, are used to rank nodes in the network (Graph) and resp
 The project aims to develop a performant version to scale also on big datasets. 
 
 ---
-## Repository Structure
-Root folder organization
+### Repository Structure
 ```plaintext
 │   README.md
 │   LICENSE
